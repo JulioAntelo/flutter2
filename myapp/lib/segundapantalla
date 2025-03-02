@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'main.dart';
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple,
+        title: const Row(
+          children: [
+            Icon(Icons.info, color: Colors.white),
+            SizedBox(width: 10),
+            Text("Detalles del Juego", style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Información del Personaje Principal
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset('assets/image3.avif',
+                      width: 120, height: 180, fit: BoxFit.cover),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Personaje Principal",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text(
+                          "En esta épica aventura, encarnas al Fatemaker, un héroe en un mundo de fantasía repleto de magia, monstruos y caos sin límites.",
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const MyApp()),
+                              );
+                            },
+                            child: const Text("Volver"))
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Descripción del Mundo
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Mundo de Wonderlands",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Un vasto mundo de fantasía lleno de criaturas extrañas, magia y acción explosiva. Explora entornos únicos, resuelve acertijos y enfréntate a enemigos formidables.",
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                  ),
+                  const SizedBox(height: 10),
+                  Image.asset('assets/image4.webp',
+                      width: double.infinity, height: 200, fit: BoxFit.cover),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Formulario de Feedback
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Comparte tu Opinión",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Tu Nombre",
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Tu Comentario",
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("¡Gracias!"),
+                            content: const Text("Tu opinión ha sido enviada correctamente."),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Cerrar"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Text("Enviar"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Buscar'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ],
+      ),
+    );
+  }
+}
