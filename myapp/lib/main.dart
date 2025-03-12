@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'segundapantalla';
+import 'login';
 
 void main() {
   runApp(const MyApp());
@@ -69,6 +70,7 @@ class HomeScreen extends StatelessWidget {
                           },
                           child: const Text("Ir a Detalles"),
                         ),
+                        const SizedBox(height: 10), // Espacio entre botones
                       ],
                     ),
                   ),
@@ -91,7 +93,14 @@ class HomeScreen extends StatelessWidget {
                                 InputDecoration(border: OutlineInputBorder())),
                         const SizedBox(height: 10),
                         ElevatedButton(
-                            onPressed: () {}, child: const Text("+info"))
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                              );
+                            },
+                            child: const Text("login"))
                       ],
                     ),
                   ),

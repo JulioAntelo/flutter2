@@ -1,0 +1,87 @@
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future<void> _saveCredentials() async {
+    if (_formKey.currentState!.validate()) {
+      // Obtener el directorio de documentos de la aplicación
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/credentials.txt');
+
+      // Escribir el nombre de usuario y la contraseña en el archivo
+      await file.writeAsString(
+          'Usuario: ${_usernameController.text}\nContraseña: ${_passwordController.text}');
+
+      // Mostrar un mensaje de éxito
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Credenciales guardadas correctamente')),
+      );
+
+      // Limpiar los campos después de guardar
+      _usernameController.clear();
+      _passwordController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Inicio de Sesión'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de usuario',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa tu nombre de usuario';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa tu contraseña';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveCredentials,
+                child: const Text('Guardar Credenciales'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
