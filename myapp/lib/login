@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'dart:html' as web; // Para manejar localStorage en la web
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,28 +9,41 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Key para el formulario
+  final _emailController = TextEditingController(); // Controlador para el email
+  final _passwordController = TextEditingController(); // Controlador para la contraseña
 
-  Future<void> _saveCredentials() async {
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Método para guardar las credenciales en localStorage
+  void _saveCredentials(String email, String password) {
+    web.window.localStorage['email'] = email;
+    web.window.localStorage['password'] = password;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Credenciales guardadas en localStorage")),
+    );
+  }
+
+  // Método para manejar el inicio de sesión
+  void _login() {
     if (_formKey.currentState!.validate()) {
-      // Obtener el directorio de documentos de la aplicación
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/credentials.txt');
+      // Validar el formulario
+      final email = _emailController.text;
+      final password = _passwordController.text;
 
-      // Escribir el nombre de usuario y la contraseña en el archivo
-      await file.writeAsString(
-          'Usuario: ${_usernameController.text}\nContraseña: ${_passwordController.text}');
+      // Guardar las credenciales en localStorage
+      _saveCredentials(email, password);
 
       // Mostrar un mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Credenciales guardadas correctamente')),
+        const SnackBar(content: Text("Inicio de sesión exitoso")),
       );
-
-      // Limpiar los campos después de guardar
-      _usernameController.clear();
-      _passwordController.clear();
     }
   }
 
@@ -39,44 +51,91 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inicio de Sesión'),
+        title: const Text("Iniciar Sesión"),
+        backgroundColor: Colors.purple,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Campo de correo electrónico
+              const Text(
+                "Correo Electrónico",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
               TextFormField(
-                controller: _usernameController,
+                controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Nombre de usuario',
+                  border: OutlineInputBorder(),
+                  hintText: "Ingresa tu correo electrónico",
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa tu nombre de usuario';
+                    return "Por favor, ingresa tu correo electrónico";
+                  }
+                  if (!value.contains("@")) {
+                    return "Correo electrónico no válido";
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
+
+              // Campo de contraseña
+              const Text(
+                "Contraseña",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _passwordController,
+                obscureText: true, // Oculta el texto de la contraseña
                 decoration: const InputDecoration(
-                  labelText: 'Contraseña',
+                  border: OutlineInputBorder(),
+                  hintText: "Ingresa tu contraseña",
                 ),
-                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, ingresa tu contraseña';
+                    return "Por favor, ingresa tu contraseña";
+                  }
+                  if (value.length < 6) {
+                    return "La contraseña debe tener al menos 6 caracteres";
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
+
+              // Botón de inicio de sesión
               ElevatedButton(
-                onPressed: _saveCredentials,
-                child: const Text('Guardar Credenciales'),
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  "Iniciar Sesión",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+
+              // Enlace para registrarse
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    // Navegar a la pantalla de registro (puedes implementarla más adelante)
+                    print("Ir a la pantalla de registro");
+                  },
+                  child: const Text(
+                    "¿No tienes una cuenta? Regístrate",
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                ),
               ),
             ],
           ),
